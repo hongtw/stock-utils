@@ -7,7 +7,8 @@ TELEGRAM_JSON_FILE = PROJECT/'telegram.json'
 UPDATE_CODES_INTERVAL = 5 * 60 * 60 * 24
 SLEEP_BETWEEN_EPOCH = 60  # seconds
 SLEEP_BETWEEN_REQ = 3    # seconds
-WEEK_AVG_TIMES = 2
+WEEK_AVG_TIMES = 5
+VOLUMN_MINIMUM = 300
 
 import logging
 FORMATTER = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y/%m/%d %H:%M:%S')

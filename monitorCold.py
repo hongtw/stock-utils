@@ -17,6 +17,7 @@ from setting import (
     SLEEP_BETWEEN_EPOCH,
     SLEEP_BETWEEN_REQ,
     WEEK_AVG_TIMES, 
+    VOLUMN_MINIMUM,
     LOGGER
 )
 TAIWAN_TIMEZONE = pytz.timezone('Asia/Taipei')
@@ -32,7 +33,8 @@ def isVolGreaterThanThreshold(code, stock_info, df):
     week_avg = df.loc[code, 'week_avg_vol']
     half_month_avg = df.loc[code, 'half_month_avg_vol']
     realtime_vols = int(stock_info['realtime']['accumulate_trade_volume'])
-    return  realtime_vols > week_avg * WEEK_AVG_TIMES and \
+    return  realtime_vols > VOLUMN_MINIMUM and \
+            realtime_vols > week_avg * WEEK_AVG_TIMES and \
             realtime_vols > half_month_avg * WEEK_AVG_TIMES * 1.1
 
 def isPriceGreaterThanOpen(stock_info):

@@ -3,3 +3,4 @@ env-win
 __pycache__
 *.pkl
 codes.json
+telegram.json
