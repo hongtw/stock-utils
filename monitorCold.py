@@ -30,12 +30,16 @@ def getVol(stocks, code):
         return 0
 
 def isVolGreaterThanThreshold(code, stock_info, df):
+    last = df.loc[code, 'last']
     week_avg = df.loc[code, 'week_avg_vol']
+    week_max = df.loc[code, 'week_max']
     half_month_avg = df.loc[code, 'half_month_avg_vol']
     realtime_vols = int(stock_info['realtime']['accumulate_trade_volume'])
-    return  realtime_vols > VOLUMN_MINIMUM and \
+    return  realtime_vols > last * WEEK_AVG_TIMES * 0.5 and \
+            realtime_vols > VOLUMN_MINIMUM and \
             realtime_vols > week_avg * WEEK_AVG_TIMES and \
-            realtime_vols > half_month_avg * WEEK_AVG_TIMES * 1.1
+            realtime_vols > half_month_avg * WEEK_AVG_TIMES * 1.1 and \
+            realtime_vols > week_max * 1.1
 
 def isPriceGreaterThanOpen(stock_info):
     price = float(stock_info['realtime']['latest_trade_price'])
@@ -72,7 +76,9 @@ def load_telegram_json():
 
 def is_taiwan_stock_opening():
     taiwan_now = datetime.now(tz=TAIWAN_TIMEZONE)
-    return taiwan_now.weekday() < 5 and  taiwan_now.hour > 9 and taiwan_now.hour < 14
+    is_opening = taiwan_now.weekday() < 5 and  taiwan_now.hour > 9 and taiwan_now.hour < 14
+    LOGGER.info(f"Taiwan Current datetime:{taiwan_now}, Is Opening:{is_opening}")
+    return is_opening
 
 class Reporter:
     def __init__(self, telegram_json=None):
@@ -120,7 +126,7 @@ def main():
     reporter.push_to_telegram(f'從 GoodInfo 抓到 {total} 筆冷門股')
     while True:
         if not (TEST_MODE or is_taiwan_stock_opening()):
-            print("非開市時間..")
+            LOGGER.info("非開市時間..")
             time.sleep(SLEEP_BETWEEN_EPOCH)
             continue
 
